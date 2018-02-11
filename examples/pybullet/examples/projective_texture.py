@@ -17,7 +17,6 @@ textureId = p.loadTexture("checker_grid.jpg")
 p.changeVisualShape(objectUniqueId=0, linkIndex=-1, textureUniqueId=textureId)
 p.changeVisualShape(objectUniqueId=1, linkIndex=-1, textureUniqueId=textureId)
 
-
 useRealTimeSimulation = 1
 
 if (useRealTimeSimulation):
