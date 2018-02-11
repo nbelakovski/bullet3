@@ -229,6 +229,9 @@ struct InternalDataRenderer : public GLInstanceRendererInternalData
 
 	b3Vector3 m_lightPos;
 	b3Vector3 m_lightSpecularIntensity;
+	
+	b3Vector3 m_projectorPos;
+	b3Vector3 m_projectorDir;
 
 	GLuint				m_defaultTexturehandle;
 	b3AlignedObjectArray<InternalTextureHandle>	m_textureHandles;
@@ -1586,7 +1589,7 @@ void GLInstancingRenderer::renderScene()
 	else if (useProjectiveTexture)
 	{
 		//renderSceneInternal(B3_CREATE_SHADOWMAP_RENDERMODE);
-		renderSceneInternal(B3_USE_PROJECTIVE_TEXTURE_RENDERMODE);
+		renderSceneInternal(B3_CREATE_SHADOWMAP_RENDERMODE);
 	}
 	else
 	{
