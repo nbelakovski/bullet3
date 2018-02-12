@@ -253,6 +253,8 @@ struct InternalDataRenderer : public GLInstanceRendererInternalData
 	{
 		m_lightPos=b3MakeVector3(-50,30,40);
 		m_lightSpecularIntensity.setValue(1,1,1);
+		
+		m_projectorPos=b3MakeVector3(-50,30,40);
 
 		//clear to zero to make it obvious if the matrix is used uninitialized
 		for (int i=0;i<16;i++)
@@ -2551,6 +2553,7 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 							}
 							case B3_USE_PROJECTIVE_TEXTURE_RENDERMODE:
 							{
+								printf("PROJECTIVE TEXTURE!!\n");
 								if ( gfxObj->m_flags&eGfxTransparency)
 								{
 									glDepthMask(false);
