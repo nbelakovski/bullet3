@@ -253,6 +253,8 @@ struct InternalDataRenderer : public GLInstanceRendererInternalData
 	{
 		m_lightPos=b3MakeVector3(-50,30,40);
 		m_lightSpecularIntensity.setValue(1,1,1);
+		
+		m_projectorPos=b3MakeVector3(-50,30,40);
 
 		//clear to zero to make it obvious if the matrix is used uninitialized
 		for (int i=0;i<16;i++)
