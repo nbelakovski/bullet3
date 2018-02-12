@@ -2548,6 +2548,7 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 							}
 							case B3_USE_PROJECTIVE_TEXTURE_RENDERMODE:
 							{
+								printf("PROJECTIVE TEXTURE!!\n");
 								if ( gfxObj->m_flags&eGfxTransparency)
 								{
 									glDepthMask(false);
