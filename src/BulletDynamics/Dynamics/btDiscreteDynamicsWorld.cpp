@@ -1472,8 +1472,8 @@ void btDiscreteDynamicsWorld::serializeActionInterfaces(btSerializer* serializer
 		btActionInterface* action = m_actions[i];
 		int size = action->calculateSerialBufferSize();
 		btChunk* chunk = serializer->allocate(size, 1);
-		action->serialize(chunk->m_oldPtr, serializer);
-		serializer->finalizeChunk(chunk, "btActionInterfaceData", BT_ACTIONINTERFACE_CODE, action);
+		const char* structType = action->serialize(chunk->m_oldPtr, serializer);
+		serializer->finalizeChunk(chunk, structType, BT_ACTIONINTERFACE_CODE, action);
 	}
 }
 

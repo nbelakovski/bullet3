@@ -20,6 +20,7 @@
 #include "btWheelInfo.h"
 #include "LinearMath/btMinMax.h"
 #include "LinearMath/btIDebugDraw.h"
+#include "LinearMath/btSerializer.h"
 #include "BulletDynamics/ConstraintSolver/btContactConstraint.h"
 
 #define ROLLING_INFLUENCE_FIX
@@ -30,6 +31,18 @@ btRigidBody& btActionInterface::getFixedBody()
 	static btRigidBody s_fixed(0, 0,0);
 	s_fixed.setMassProps(btScalar(0.),btVector3(btScalar(0.),btScalar(0.),btScalar(0.)));
 	return s_fixed;
+}
+
+const char * btRaycastVehicle::serialize(void * dataBuffer, btSerializer * serializer) const
+{
+    btRaycastVehicleData * data = static_cast<btRaycastVehicleData*>(dataBuffer);
+    data->m_chassisBody = serializer->getUniquePointer(m_chassisBody);
+    data->m_indexRightAxis = m_indexRightAxis;
+    data->m_indexUpAxis = m_indexUpAxis;
+    data->m_indexForwardAxis = m_indexForwardAxis;
+    data->m_userIndex2 = m_userIndex2;
+    data->base.m_actionType = RAYCASTVEHICLE;
+    return "btRaycastVehicleData";
 }
 
 btRaycastVehicle::btRaycastVehicle(const btVehicleTuning& tuning,btRigidBody* chassis,	btVehicleRaycaster* raycaster )

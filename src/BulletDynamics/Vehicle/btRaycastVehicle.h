@@ -24,7 +24,8 @@ class btDynamicsWorld;
 struct btRaycastVehicleData
 {
 	btActionInterfaceData base; // this needs to be first
-    int m_chassisBody_userIndex2;
+    char m_pad[4];
+    void *m_chassisBody;
     int m_indexRightAxis;
     int m_indexUpAxis;
     int	m_indexForwardAxis;
@@ -37,16 +38,7 @@ class btRaycastVehicle : public btActionInterface
 {
 public:
 
-    virtual void serialize(void * dataBuffer, btSerializer * serializer) const
-    {
-        btRaycastVehicleData * data = static_cast<btRaycastVehicleData*>(dataBuffer);
-        data->m_chassisBody_userIndex2 = m_chassisBody->getUserIndex2();
-        data->m_indexRightAxis = m_indexRightAxis;
-        data->m_indexUpAxis = m_indexUpAxis;
-        data->m_indexForwardAxis = m_indexForwardAxis;
-        data->m_userIndex2 = m_userIndex2;
-        data->base.m_actionType = RAYCASTVEHICLE;
-    }
+    virtual const char * serialize(void * dataBuffer, btSerializer * serializer) const;
 
     virtual void deserialize(void * dataBuffer)
     {

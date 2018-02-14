@@ -47,7 +47,7 @@ public:
 
 	virtual void debugDraw(btIDebugDraw* debugDrawer) = 0;
 
-	virtual void serialize(void* dataBuffer, btSerializer* serializer) const {}
+	virtual const char * serialize(void* dataBuffer, btSerializer* serializer) const {}
 //	virtual void deSerialize(btSerializer*) {};
 	virtual size_t calculateSerialBufferSize() const {return 0;}
 

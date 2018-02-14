@@ -157,14 +157,11 @@ void btWorldImporter::convertAction(btActionInterfaceData* action)
 			auto* data = reinterpret_cast<btRaycastVehicleData*>(action);
             auto* raycaster = new btDefaultVehicleRaycaster(this->m_dynamicsWorld);
             btRaycastVehicle::btVehicleTuning tuning; // unused, but necessary for the interface
+            btCollisionObject ** obj = m_bodyMap.find(data->m_chassisBody);
             btRigidBody * chassis = nullptr;
-            for (int i = 0; i < this->m_dynamicsWorld->getCollisionObjectArray().size(); ++i) {
-                btCollisionObject* obj = this->m_dynamicsWorld->getCollisionObjectArray()[i];
-                if (obj->getUserIndex2() == data->m_chassisBody_userIndex2)
-                {
-                    chassis = dynamic_cast<btRigidBody*>(obj);
-                    break;
-                }
+            if (obj && *obj)
+            {
+                chassis = dynamic_cast<btRigidBody*>(*obj);
             }
             auto* vehicle = new btRaycastVehicle(tuning, chassis, raycaster);
             vehicle->deserialize(data);
