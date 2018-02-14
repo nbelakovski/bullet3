@@ -506,6 +506,7 @@ const char*	btRigidBody::serialize(void* dataBuffer, class btSerializer* seriali
 	rbd->m_additionalAngularDampingFactor = m_additionalAngularDampingFactor;
 	rbd->m_linearSleepingThreshold=m_linearSleepingThreshold;
 	rbd->m_angularSleepingThreshold = m_angularSleepingThreshold;
+	rbd->m_userIndex2 = m_userIndex2;
 
 	// Fill padding with zeros to appease msan.
 #ifdef BT_USE_DOUBLE_PRECISION

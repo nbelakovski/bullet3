@@ -96,9 +96,16 @@ protected:
 
 	void	serializeRigidBodies(btSerializer* serializer);
 
+	void    serializeActionInterfaces(btSerializer* serializer);
+
 	void	serializeDynamicsWorldInfo(btSerializer* serializer);
 
 public:
+
+	void setLocalTime(btScalar localTime)
+	{
+		m_localTime = localTime;
+	}
 
 
 	BT_DECLARE_ALIGNED_ALLOCATOR();
@@ -124,6 +131,16 @@ public:
 	virtual void	addAction(btActionInterface*);
 
 	virtual void	removeAction(btActionInterface*);
+
+	btAlignedObjectArray<btActionInterface*> getActionInterfaceArray()
+	{
+		return m_actions;
+	}
+
+	const btAlignedObjectArray<btActionInterface*> getActionInterfaceArray() const
+	{
+		return m_actions;
+	}
 	
 	btSimulationIslandManager*	getSimulationIslandManager()
 	{

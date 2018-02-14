@@ -90,6 +90,7 @@ typedef unsigned __int64 uint64_t;
 #elif defined (__APPLE__)
 
 #include <inttypes.h>
+typedef long btintptr_t;
 
 #elif defined(FREE_WINDOWS)
 
@@ -189,6 +190,8 @@ char *includefiles[] = {
 	"../../../src/BulletDynamics/ConstraintSolver/btContactSolverInfo.h",
 	"../../../src/BulletDynamics/Dynamics/btDynamicsWorld.h",
 	"../../../src/BulletDynamics/Dynamics/btRigidBody.h",
+	"../../../src/BulletDynamics/Dynamics/btActionInterface.h",
+	"../../../src/BulletDynamics/Vehicle/btRaycastVehicle.h",
 	"../../../src/BulletDynamics/ConstraintSolver/btTypedConstraint.h",
 	"../../../src/BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h",
 	"../../../src/BulletDynamics/ConstraintSolver/btHingeConstraint.h",

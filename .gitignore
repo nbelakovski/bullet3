@@ -18,3 +18,9 @@ pip-selfcheck.json
 /build
 /dist
 *.eggs
+
+# Clion
+.idea
+
+# Mac OS
+.DS_Store

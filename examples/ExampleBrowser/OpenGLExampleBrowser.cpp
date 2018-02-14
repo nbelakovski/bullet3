@@ -1275,7 +1275,6 @@ void OpenGLExampleBrowser::update(float deltaTime)
 				//printf("---------------------------------------------------\n");
 				//printf("Framecount = %d\n",frameCount);
 				B3_PROFILE("sCurrentDemo->stepSimulation");
-
 				if (gFixedTimeStep>0)
 				{
 				

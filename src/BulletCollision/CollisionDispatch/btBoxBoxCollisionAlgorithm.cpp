@@ -19,7 +19,7 @@ subject to the following restrictions:
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
 #include "btBoxBoxDetector.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"
-#define USE_PERSISTENT_CONTACTS 1
+//#define USE_PERSISTENT_CONTACTS 1 // doesn't seem to impact result of simulation. update: need to not define it, not just change it to 0
 
 btBoxBoxCollisionAlgorithm::btBoxBoxCollisionAlgorithm(btPersistentManifold* mf,const btCollisionAlgorithmConstructionInfo& ci,const btCollisionObjectWrapper* body0Wrap,const btCollisionObjectWrapper* body1Wrap)
 : btActivatingCollisionAlgorithm(ci,body0Wrap,body1Wrap),

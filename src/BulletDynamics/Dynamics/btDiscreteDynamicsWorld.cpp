@@ -727,12 +727,12 @@ void	btDiscreteDynamicsWorld::solveConstraints(btContactSolverInfo& solverInfo)
 	btTypedConstraint** constraintsPtr = getNumConstraints() ? &m_sortedConstraints[0] : 0;
 
 	m_solverIslandCallback->setup(&solverInfo,constraintsPtr,m_sortedConstraints.size(),getDebugDrawer());
-	m_constraintSolver->prepareSolve(getCollisionWorld()->getNumCollisionObjects(), getCollisionWorld()->getDispatcher()->getNumManifolds());
+	m_constraintSolver->prepareSolve(getCollisionWorld()->getNumCollisionObjects(), getCollisionWorld()->getDispatcher()->getNumManifolds()); // does nothing
 
 	/// solve all the constraints for this island
 	m_islandManager->buildAndProcessIslands(getCollisionWorld()->getDispatcher(),getCollisionWorld(),m_solverIslandCallback);
 
-	m_solverIslandCallback->processConstraints();
+	m_solverIslandCallback->processConstraints(); // seems like this processes everything that wasn't processed by buildAndProcessIslands due to minimumbatchsize
 
 	m_constraintSolver->allSolved(solverInfo, m_debugDrawer);
 }
@@ -1466,6 +1466,17 @@ void	btDiscreteDynamicsWorld::serializeRigidBodies(btSerializer* serializer)
 	}
 }
 
+void btDiscreteDynamicsWorld::serializeActionInterfaces(btSerializer* serializer)
+{
+	for (int i = 0; i < m_actions.size(); ++i) {
+		btActionInterface* action = m_actions[i];
+		int size = action->calculateSerialBufferSize();
+		btChunk* chunk = serializer->allocate(size, 1);
+		action->serialize(chunk->m_oldPtr, serializer);
+		serializer->finalizeChunk(chunk, "btActionInterfaceData", BT_ACTIONINTERFACE_CODE, action);
+	}
+}
+
 
 
 
@@ -1482,6 +1493,8 @@ void	btDiscreteDynamicsWorld::serializeDynamicsWorldInfo(btSerializer* serialize
 #endif//BT_USE_DOUBLE_PRECISION
 
 		memset(worldInfo ,0x00,len);
+
+		worldInfo->m_localTime = m_localTime;
 
 		m_gravity.serialize(worldInfo->m_gravity);
 		worldInfo->m_solverInfo.m_tau = getSolverInfo().m_tau;
@@ -1534,6 +1547,8 @@ void	btDiscreteDynamicsWorld::serialize(btSerializer* serializer)
 	serializeRigidBodies(serializer);
 
 	serializeContactManifolds(serializer);
+
+	serializeActionInterfaces(serializer);
 
 	serializer->finishSerialization();
 }

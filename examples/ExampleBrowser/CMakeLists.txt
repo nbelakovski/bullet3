@@ -2,6 +2,7 @@
 INCLUDE_DIRECTORIES(
 	.
 	${BULLET_PHYSICS_SOURCE_DIR}/src
+	${BULLET_PHYSICS_SOURCE_DIR}/Extras/Serialize
 	${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs
 )
 
@@ -85,7 +86,7 @@ INCLUDE_DIRECTORIES(
 
 
 LINK_LIBRARIES(
-        BulletExampleBrowserLib Bullet3Common BulletSoftBody BulletDynamics BulletCollision BulletInverseDynamicsUtils BulletInverseDynamics LinearMath OpenGLWindow gwen BussIK
+        BulletExampleBrowserLib Bullet3Common BulletSoftBody BulletDynamics BulletCollision BulletInverseDynamicsUtils BulletInverseDynamics LinearMath OpenGLWindow gwen BussIK BulletWorldImporter BulletFileLoader
 )
 
 IF (WIN32)
@@ -349,7 +350,7 @@ SET(BulletExampleBrowser_SRCS
 	../ThirdPartyLibs/tinyxml/tinyxmlparser.cpp
 	InProcessExampleBrowser.cpp
 	${BULLET_PHYSICS_SOURCE_DIR}/build3/bullet.rc
-)
+        ../Benchmarks/nioSimpleVehicle.h ../Benchmarks/nioSimpleVehicle.cpp)
 
 
 

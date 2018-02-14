@@ -3,6 +3,13 @@
 
 #include "btMotionState.h"
 
+struct btMotionStateDoubleData
+{
+    btTransformDoubleData m_graphicsWorldTrans;
+    btTransformDoubleData m_centerOfMassOffset;
+    btTransformDoubleData m_startWorldTrans;
+};
+
 ///The btDefaultMotionState provides a common implementation to synchronize world transforms with offsets.
 ATTRIBUTE_ALIGNED16(struct)	btDefaultMotionState : public btMotionState
 {
@@ -35,7 +42,19 @@ ATTRIBUTE_ALIGNED16(struct)	btDefaultMotionState : public btMotionState
 			m_graphicsWorldTrans = centerOfMassWorldTrans * m_centerOfMassOffset;
 	}
 
-	
+	void serialize(btMotionStateDoubleData * btmsdd)
+    {
+        m_graphicsWorldTrans.serialize(btmsdd->m_graphicsWorldTrans);
+        m_centerOfMassOffset.serialize(btmsdd->m_centerOfMassOffset);
+        m_startWorldTrans.serialize(btmsdd->m_startWorldTrans);
+    }
+
+    void deserialize(btMotionStateDoubleData * btmsdd)
+    {
+        m_graphicsWorldTrans.deSerializeDouble(btmsdd->m_graphicsWorldTrans);
+        m_centerOfMassOffset.deSerializeDouble(btmsdd->m_centerOfMassOffset);
+        m_startWorldTrans.deSerializeDouble(btmsdd->m_startWorldTrans);
+    }
 
 };
 

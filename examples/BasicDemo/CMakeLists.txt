@@ -39,6 +39,7 @@ ENDIF(INTERNAL_ADD_POSTFIX_EXECUTABLE_NAMES)
 
 
 INCLUDE_DIRECTORIES(
+        ${BULLET_PHYSICS_SOURCE_DIR}/Extras/Serialize
         ${BULLET_PHYSICS_SOURCE_DIR}/src
         ${BULLET_PHYSICS_SOURCE_DIR}/btgui
         ${BULLET_PHYSICS_SOURCE_DIR}/examples
@@ -60,7 +61,7 @@ SET(AppBasicExampleGui_SRCS
 ADD_DEFINITIONS(-DB3_USE_STANDALONE_EXAMPLE)
 
 LINK_LIBRARIES(
-        BulletDynamics BulletCollision LinearMath OpenGLWindow Bullet3Common 
+        BulletDynamics BulletCollision LinearMath OpenGLWindow Bullet3Common BulletWorldImporter BulletFileLoader
 )
 
 #some code to support OpenGL and Glew cross platform

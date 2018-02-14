@@ -611,6 +611,7 @@ struct	btRigidBodyDoubleData
 	double					m_angularSleepingThreshold;
 	int						m_additionalDamping;
 	char	m_padding[4];
+	int m_userIndex2;
 };
 
 

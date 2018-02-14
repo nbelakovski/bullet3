@@ -24,19 +24,25 @@ subject to the following restrictions:
 ///btBulletDynamicsCommon.h is the main Bullet include file, contains most common include files.
 #include "btBulletDynamicsCommon.h"
 #include <stdio.h> //printf debugging
+#include <iostream>
+#include <BulletWorldImporter/btBulletWorldImporter.h>
 #include "TaruData.h"
 #include "landscapeData.h"
 #include "BulletCollision/BroadphaseCollision/btDbvtBroadphase.h"
+#include "BulletDynamics/Vehicle/btRaycastVehicle.h"
 
 #include "BulletCollision/CollisionDispatch/btSimulationIslandManager.h"
 
 #include "LinearMath/btAlignedObjectArray.h"
 #include "LinearMath/btTransform.h"
+#include "nioSimpleVehicle.h"
 
 class btDynamicsWorld;
 
 #define NUMRAYS 500
 #define USE_PARALLEL_RAYCASTS 1
+
+#define VEHICLE_INDEX 1
 
 class btRigidBody;
 class btBroadphaseInterface;
@@ -90,6 +96,7 @@ class BenchmarkDemo : public CommonRigidBodyMTBase
 	void initRays();
 
 	public:
+	nioSimpleVehicle * m_simpleVehicle = 0;
 
 	BenchmarkDemo(struct GUIHelperInterface* helper, int benchmark)
 	:CommonRigidBodyMTBase(helper),
@@ -114,6 +121,15 @@ class BenchmarkDemo : public CommonRigidBodyMTBase
 		float targetPos[3]={0,10.46,0};
 		m_guiHelper->resetCamera(dist,yaw,pitch,targetPos[0],targetPos[1],targetPos[2]);
 	}
+
+    void resetCamera(const btTransform & newpos)
+    {
+        float dist = 50;
+        float pitch = -35;
+        float yaw = 52;
+        float targetPos[3]={newpos.getOrigin().getX(),newpos.getOrigin().getY(),newpos.getOrigin().getZ()};
+        m_guiHelper->resetCamera(dist,yaw,pitch,targetPos[0],targetPos[1],targetPos[2]);
+    }
 };
 
 
@@ -366,18 +382,75 @@ static btRaycastBar2 raycastBar;
 
 void BenchmarkDemo::stepSimulation(float deltaTime)
 {
+    static int counter = 0;
+    ++counter;
 	if (m_dynamicsWorld)
 	{
 		m_dynamicsWorld->stepSimulation(deltaTime);
 	}
-	
+
+//	if (m_simpleVehicle)
+//	{
+//		m_simpleVehicle->render(m_guiHelper);
+//        resetCamera(m_simpleVehicle->getVehicle()->getChassisWorldTransform());
+//	}
+    if (m_dynamicsWorld)
+    {
+        for(int i = 0; i < m_dynamicsWorld->getActionInterfaceArray().size(); ++i)
+        {
+//            std::cout << m_dynamicsWorld->getActionInterfaceArray()[i]->getUserIndex2() << std::endl;
+            if (m_dynamicsWorld->getActionInterfaceArray()[i]->getUserIndex2() == VEHICLE_INDEX) {
+                auto *vehicle = dynamic_cast<btRaycastVehicle *>(m_dynamicsWorld->getActionInterfaceArray()[i]);
+                if (vehicle) {
+                    btTransform pos = vehicle->getChassisWorldTransform();
+                    std::cout << counter << ":" << pos.getOrigin()[0] << ", " << pos.getOrigin()[1] << ", "
+                              << pos.getOrigin()[2] << std::endl;
+                    resetCamera(pos);
+                }
+            }
+        }
+    }
+
 	if (m_benchmark==7)
 	{
 		castRays();
 
 		raycastBar.draw();
-	
+
 	}
+
+    // serialization/deserialization:
+    static bool saved = false;
+    if (counter == 260 && !saved)
+    {
+        std::cout << "Saving..." << std::endl;
+        btDefaultSerializer* s = new btDefaultSerializer();
+        m_dynamicsWorld->serialize(s);
+        FILE* file = fopen("basic_demo.bullet", "wb");
+        fwrite(s->getBufferPointer(), s->getCurrentBufferSize(), 1, file);
+        fclose(file);
+        saved = true;
+    }
+
+    static bool loaded = false;
+    if (true && saved && !loaded)
+    {
+        std::cout << "Loading..." << std::endl;
+        btDiscreteDynamicsWorld * m_dynamicsWorldCopy = m_dynamicsWorld;
+        // delete m_dynamicsWorld;
+        m_guiHelper->removeAllGraphicsInstances();
+        createEmptyDynamicsWorld();
+        m_guiHelper->createPhysicsDebugDrawer(m_dynamicsWorld);
+
+        if (m_dynamicsWorld->getDebugDrawer())
+            m_dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe+btIDebugDraw::DBG_DrawContactPoints);
+
+        btBulletWorldImporter* loader = new btBulletWorldImporter(m_dynamicsWorld);
+        loader->loadFile("basic_demo.bullet");
+        loaded = true;
+        m_guiHelper->autogenerateGraphicsObjects(m_dynamicsWorld);
+        delete loader;
+    }
 
 }
 
@@ -1149,71 +1222,77 @@ void BenchmarkDemo::createLargeMeshBody()
 
 void	BenchmarkDemo::createTest5()
 {
-	setCameraDistance(btScalar(250.));
-	btVector3 boxSize(1.5f,1.5f,1.5f);
-	float boxMass = 1.0f;
-	float sphereRadius = 1.5f;
-	float sphereMass = 1.0f;
-	float capsuleHalf = 2.0f;
-	float capsuleRadius = 1.0f;
-	float capsuleMass = 1.0f;
+	setCameraDistance(btScalar(25.));
+//	btVector3 boxSize(1.5f,1.5f,1.5f);
+//	float boxMass = 1.0f;
+//	float sphereRadius = 1.5f;
+//	float sphereMass = 1.0f;
+//	float capsuleHalf = 2.0f;
+//	float capsuleRadius = 1.0f;
+//	float capsuleMass = 1.0f;
+//
+//	{
+//		int size = 10;
+//		int height = 10;
+//
+//		const float cubeSize = boxSize[0];
+//		float spacing = 2.0f;
+//		btVector3 pos(0.0f, 20.0f, 0.0f);
+//		float offset = -size * (cubeSize * 2.0f + spacing) * 0.5f;
+//
+//		int numBodies = 0;
+//
+//		for(int k=0;k<height;k++) {
+//			for(int j=0;j<size;j++) {
+//				pos[2] = offset + (float)j * (cubeSize * 2.0f + spacing);
+//				for(int i=0;i<size;i++) {
+//					pos[0] = offset + (float)i * (cubeSize * 2.0f + spacing);
+//					btVector3 bpos = btVector3(0,25,0) + btVector3(5.0f,1.0f,5.0f)*pos;
+//					int idx = rand() % 9;
+//					btTransform trans;
+//					trans.setIdentity();
+//					trans.setOrigin(bpos);
+//
+//					switch(idx) {
+//						case 0:case 1:case 2:
+//						{
+//							float r = 0.5f * (idx+1);
+//							btBoxShape* boxShape = new btBoxShape(boxSize*r);
+//							createRigidBody(boxMass*r,trans,boxShape);
+//						}
+//						break;
+//
+//						case 3:case 4:case 5:
+//						{
+//							float r = 0.5f * (idx-3+1);
+//							btSphereShape* sphereShape = new btSphereShape(sphereRadius*r);
+//							createRigidBody(sphereMass*r,trans,sphereShape);
+//						}
+//						break;
+//
+//						case 6:case 7:case 8:
+//						{
+//							float r = 0.5f * (idx-6+1);
+//							btCapsuleShape* capsuleShape = new btCapsuleShape(capsuleRadius*r,capsuleHalf*r);
+//							createRigidBody(capsuleMass*r,trans,capsuleShape);
+//						}
+//						break;
+//					}
+//
+//					numBodies++;
+//				}
+//			}
+//			offset -= 0.05f * spacing * (size-1);
+//			spacing *= 1.1f;
+//			pos[1] += (cubeSize * 2.0f + spacing);
+//		}
+//	}
+	// Add a raycast vehicle
+	m_simpleVehicle = new nioSimpleVehicle(m_dynamicsWorld);
 
-	{
-		int size = 10;
-		int height = 10;
-
-		const float cubeSize = boxSize[0];
-		float spacing = 2.0f;
-		btVector3 pos(0.0f, 20.0f, 0.0f);
-		float offset = -size * (cubeSize * 2.0f + spacing) * 0.5f;
-		
-		int numBodies = 0;
-
-		for(int k=0;k<height;k++) {
-			for(int j=0;j<size;j++) {
-				pos[2] = offset + (float)j * (cubeSize * 2.0f + spacing);
-				for(int i=0;i<size;i++) {
-					pos[0] = offset + (float)i * (cubeSize * 2.0f + spacing);
-					btVector3 bpos = btVector3(0,25,0) + btVector3(5.0f,1.0f,5.0f)*pos;
-					int idx = rand() % 9;
-					btTransform trans;
-					trans.setIdentity();
-					trans.setOrigin(bpos);
-
-					switch(idx) {
-						case 0:case 1:case 2:
-						{
-							float r = 0.5f * (idx+1);
-							btBoxShape* boxShape = new btBoxShape(boxSize*r);
-							createRigidBody(boxMass*r,trans,boxShape);
-						}
-						break;
-
-						case 3:case 4:case 5:
-						{
-							float r = 0.5f * (idx-3+1);
-							btSphereShape* sphereShape = new btSphereShape(sphereRadius*r);
-							createRigidBody(sphereMass*r,trans,sphereShape);
-						}
-						break;
-
-						case 6:case 7:case 8:
-						{
-							float r = 0.5f * (idx-6+1);
-							btCapsuleShape* capsuleShape = new btCapsuleShape(capsuleRadius*r,capsuleHalf*r);
-							createRigidBody(capsuleMass*r,trans,capsuleShape);
-						}
-						break;
-					}
-
-					numBodies++;
-				}
-			}
-			offset -= 0.05f * spacing * (size-1);
-			spacing *= 1.1f;
-			pos[1] += (cubeSize * 2.0f + spacing);
-		}
-	}
+    m_simpleVehicle->getVehicle()->applyEngineForce(btScalar(5000), 0);
+    m_simpleVehicle->getVehicle()->applyEngineForce(btScalar(5000), 1);
+    m_simpleVehicle->getVehicle()->setUserIndex2(VEHICLE_INDEX);
 
 	createLargeMeshBody();
 }

@@ -18,6 +18,9 @@ subject to the following restrictions:
 #ifdef USE_GIMPACT
 #include "BulletCollision/Gimpact/btGImpactShape.h"
 #endif
+#include "BulletDynamics/Dynamics/btActionInterface.h"
+#include "BulletDynamics/Vehicle/btRayCastVehicle.h"
+
 btWorldImporter::btWorldImporter(btDynamicsWorld* world)
 :m_dynamicsWorld(world),
 m_verboseMode(0),
@@ -145,6 +148,32 @@ void btWorldImporter::deleteAllData()
 
 }
 
+void btWorldImporter::convertAction(btActionInterfaceData* action)
+{
+	switch (action->m_actionType)
+	{
+        case btActionInterface::RAYCASTVEHICLE:
+		{
+			auto* data = reinterpret_cast<btRaycastVehicleData*>(action);
+            auto* raycaster = new btDefaultVehicleRaycaster(this->m_dynamicsWorld);
+            btRaycastVehicle::btVehicleTuning tuning; // unused, but necessary for the interface
+            btRigidBody * chassis = nullptr;
+            for (int i = 0; i < this->m_dynamicsWorld->getCollisionObjectArray().size(); ++i) {
+                btCollisionObject* obj = this->m_dynamicsWorld->getCollisionObjectArray()[i];
+                if (obj->getUserIndex2() == data->m_chassisBody_userIndex2)
+                {
+                    chassis = dynamic_cast<btRigidBody*>(obj);
+                    break;
+                }
+            }
+            auto* vehicle = new btRaycastVehicle(tuning, chassis, raycaster);
+            vehicle->deserialize(data);
+            m_dynamicsWorld->addVehicle(vehicle);
+		}
+        default:break;
+    }
+}
+
 
 
 btCollisionShape* btWorldImporter::convertCollisionShape(  btCollisionShapeData* shapeData  )
@@ -248,9 +277,14 @@ btCollisionShape* btWorldImporter::convertCollisionShape(  btCollisionShapeData*
 			{
 				btConvexInternalShapeData* bsd = (btConvexInternalShapeData*)shapeData;
 				btVector3 implicitShapeDimensions;
-				implicitShapeDimensions.deSerializeFloat(bsd->m_implicitShapeDimensions);
 				btVector3 localScaling;
+#ifdef BT_USE_DOUBLE_PRECISION
+				implicitShapeDimensions.deSerializeDouble(bsd->m_implicitShapeDimensions);
+				localScaling.deSerializeDouble(bsd->m_localScaling);
+#else
+				implicitShapeDimensions.deSerializeFloat(bsd->m_implicitShapeDimensions);
 				localScaling.deSerializeFloat(bsd->m_localScaling);
+#endif
 				btVector3 margin(bsd->m_collisionMargin,bsd->m_collisionMargin,bsd->m_collisionMargin);
 				switch (shapeData->m_shapeType)
 				{
@@ -396,7 +430,11 @@ btCollisionShape* btWorldImporter::convertCollisionShape(  btCollisionShapeData*
 					shape->setMargin(bsd->m_collisionMargin);
 					
 					btVector3 localScaling;
+#ifdef BT_USE_DOUBLE_PRECISION
+					localScaling.deSerializeDouble(bsd->m_localScaling);
+#else
 					localScaling.deSerializeFloat(bsd->m_localScaling);
+#endif
 					shape->setLocalScaling(localScaling);
 					
 				}
@@ -1649,9 +1687,16 @@ btRigidBody*  btWorldImporter::createRigidBody(bool isDynamic, btScalar mass, co
 
 	if (mass)
 		shape->calculateLocalInertia(mass,localInertia);
+
+	// goal: setup rigidbodyconstructioninfo with motionstate
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+
+	btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape, localInertia);
+
+	btRigidBody* body = new btRigidBody(cInfo);
 	
-	btRigidBody* body = new btRigidBody(mass,0,shape,localInertia);	
-	body->setWorldTransform(startTransform);
+	// btRigidBody* body = new btRigidBody(mass,0,shape,localInertia);	
+	// body->setWorldTransform(startTransform);
 
 	if (m_dynamicsWorld)
 		m_dynamicsWorld->addRigidBody(body);
@@ -2103,7 +2148,20 @@ void	btWorldImporter::convertRigidBodyDouble( btRigidBodyDoubleData* colObjData)
 		angularFactor.deSerializeDouble(colObjData->m_angularFactor);
 		body->setLinearFactor(linearFactor);
 		body->setAngularFactor(angularFactor);
-				
+		body->setUserIndex2(colObjData->m_userIndex2);
+		btVector3 linearVelocity, angularVelocity;
+		linearVelocity.deSerializeDouble(colObjData->m_linearVelocity);
+		angularVelocity.deSerializeDouble(colObjData->m_angularVelocity);
+		body->setLinearVelocity(linearVelocity);
+		body->setAngularVelocity(angularVelocity);
+		body->setCollisionFlags(colObjData->m_collisionObjectData.m_collisionFlags);
+		btVector3 interpolationLinearVelocity, interpolationAngularVelocity;
+		interpolationLinearVelocity.deSerializeDouble(colObjData->m_collisionObjectData.m_interpolationLinearVelocity);
+		interpolationAngularVelocity.deSerializeDouble(colObjData->m_collisionObjectData.m_interpolationAngularVelocity);
+        body->setInterpolationLinearVelocity(interpolationLinearVelocity);
+        body->setInterpolationAngularVelocity(interpolationAngularVelocity);
+//        static_cast<btDefaultMotionState*>(body->getMotionState())->deserialize(&(colObjData->m_motionStateDoubleData));
+
 
 #ifdef USE_INTERNAL_EDGE_UTILITY
 		if (shape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)

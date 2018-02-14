@@ -21,18 +21,46 @@ class btDynamicsWorld;
 
 //class btVehicleTuning;
 
+struct btRaycastVehicleData
+{
+	btActionInterfaceData base; // this needs to be first
+    int m_chassisBody_userIndex2;
+    int m_indexRightAxis;
+    int m_indexUpAxis;
+    int	m_indexForwardAxis;
+    int m_userIndex2;
+    // char pad[8];
+};
+
 ///rayCast vehicle, very special constraint that turn a rigidbody into a vehicle.
 class btRaycastVehicle : public btActionInterface
 {
+public:
 
-		btAlignedObjectArray<btVector3>	m_forwardWS;
-		btAlignedObjectArray<btVector3>	m_axle;
-		btAlignedObjectArray<btScalar>	m_forwardImpulse;
-		btAlignedObjectArray<btScalar>	m_sideImpulse;
+    virtual void serialize(void * dataBuffer, btSerializer * serializer) const
+    {
+        btRaycastVehicleData * data = static_cast<btRaycastVehicleData*>(dataBuffer);
+        data->m_chassisBody_userIndex2 = m_chassisBody->getUserIndex2();
+        data->m_indexRightAxis = m_indexRightAxis;
+        data->m_indexUpAxis = m_indexUpAxis;
+        data->m_indexForwardAxis = m_indexForwardAxis;
+        data->m_userIndex2 = m_userIndex2;
+        data->base.m_actionType = RAYCASTVEHICLE;
+    }
+
+    virtual void deserialize(void * dataBuffer)
+    {
+        btRaycastVehicleData * data = static_cast<btRaycastVehicleData*>(dataBuffer);
+        m_indexRightAxis = data->m_indexRightAxis;
+        m_indexUpAxis = data->m_indexUpAxis;
+        m_indexForwardAxis = data->m_indexForwardAxis;
+        m_userIndex2 = data->m_userIndex2;
+    }
+private:
 	
 		///backwards compatibility
-		int	m_userConstraintType;
-		int	m_userConstraintId;
+		int	m_userConstraintType; // looks unused, will not serialize
+		int	m_userConstraintId; // small chance this is used by something in examples/SharedMemory, but unlikely
 
 public:
 	class btVehicleTuning
@@ -59,18 +87,12 @@ public:
 private:
 
 	btVehicleRaycaster*	m_vehicleRaycaster;
-	btScalar		m_pitchControl;
-	btScalar	m_steeringValue; 
-	btScalar m_currentVehicleSpeedKmHour;
 
 	btRigidBody* m_chassisBody;
 
 	int m_indexRightAxis;
 	int m_indexUpAxis;
 	int	m_indexForwardAxis;
-
-	void defaultInit(const btVehicleTuning& tuning);
-
 public:
 
 	//constructor to create a car from an existing rigidbody
@@ -129,11 +151,6 @@ public:
 
 	
 	void setBrake(btScalar brake,int wheelIndex);
-
-	void	setPitchControl(btScalar pitch)
-	{
-		m_pitchControl = pitch;
-	}
 	
 	void	updateSuspension(btScalar deltaTime);
 
@@ -179,12 +196,6 @@ public:
 		return forwardW;
 	}
 
-	///Velocity of vehicle (positive if velocity vector has same direction as foward vector)
-	btScalar	getCurrentSpeedKmHour() const
-	{
-		return m_currentVehicleSpeedKmHour;
-	}
-
 	virtual void	setCoordinateSystem(int rightIndex,int upIndex,int forwardIndex)
 	{
 		m_indexRightAxis = rightIndex;
@@ -213,6 +224,8 @@ public:
 	{
 		return m_userConstraintId;
 	}
+
+    size_t calculateSerialBufferSize() const override;
 
 };
 

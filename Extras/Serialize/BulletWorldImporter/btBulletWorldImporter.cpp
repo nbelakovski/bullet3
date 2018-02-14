@@ -183,6 +183,7 @@ bool	btBulletWorldImporter::convertAllObjects(  bParse::btBulletFile* bulletFile
 			solverInfo.m_splitImpulse = solverInfoData->m_solverInfo.m_splitImpulse;
 
 			setDynamicsWorldInfo(gravity,solverInfo);
+			static_cast<btDiscreteDynamicsWorld*>(m_dynamicsWorld)->setLocalTime(solverInfoData->m_localTime);
 		} else
 		{
 			btDynamicsWorldFloatData* solverInfoData = (btDynamicsWorldFloatData*)bulletFile2->m_dynamicsWorldInfo[i];
@@ -219,6 +220,7 @@ bool	btBulletWorldImporter::convertAllObjects(  bParse::btBulletFile* bulletFile
 			solverInfo.m_splitImpulse = solverInfoData->m_solverInfo.m_splitImpulse;
 
 			setDynamicsWorldInfo(gravity,solverInfo);
+			static_cast<btDiscreteDynamicsWorld*>(m_dynamicsWorld)->setLocalTime(solverInfoData->m_localTime);
 		}
 	}
 
@@ -354,6 +356,12 @@ bool	btBulletWorldImporter::convertAllObjects(  bParse::btBulletFile* bulletFile
 		}
 		
 
+	}
+
+	for (i=0;i<bulletFile2->m_actions.size();i++)
+	{
+		btActionInterfaceData* data = reinterpret_cast<btActionInterfaceData*>(bulletFile2->m_actions[i]);
+		convertAction(data);
 	}
 
 	return true;

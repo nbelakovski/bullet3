@@ -26,6 +26,9 @@ subject to the following restrictions:
 #include <stdio.h>
 #include "../ExampleBrowser/OpenGLGuiHelper.h"
 
+#include <signal.h>
+#include <string>
+
 CommonExampleInterface*    example;
 int gSharedMemoryKey=-1;
 
@@ -69,8 +72,20 @@ public:
 };
 int main(int argc, char* argv[])
 {
-	
-	SimpleOpenGL3App* app = new SimpleOpenGL3App("Bullet Standalone Example",1024,768,true);
+	if (getenv("ATTACH_DEBUGGER")) {
+        printf(" *************************\n");
+        printf(" *   PROGRAM SUSPENDED   *\n");
+        printf(" *   wait for debugger   *\n");
+        printf(" *************************\n");
+        raise(SIGSTOP);
+    }
+	std::string title("Bullet Standalone Example");
+	if (argc > 1)
+	{
+        title += " ";
+		title += argv[1];
+	}
+	SimpleOpenGL3App* app = new SimpleOpenGL3App(title.c_str(),1024,768,true);
 	
 	prevMouseButtonCallback = app->m_window->getMouseButtonCallback();
 	prevMouseMoveCallback = app->m_window->getMouseMoveCallback();
@@ -102,7 +117,7 @@ int main(int argc, char* argv[])
 		if (dtSec<0.1)
 			dtSec = 0.1;
 	
-		example->stepSimulation(dtSec);
+		example->stepSimulation(0.01);
 	  clock.reset();
 
 		example->renderScene();

@@ -93,6 +93,11 @@ public:
 		return int( m_manifoldsPtr.size());
 	}
 
+	void addManifold(btPersistentManifold* m)
+	{
+		m_manifoldsPtr.push_back(m);
+	}
+
 	btPersistentManifold**	getInternalManifoldPointer()
 	{
 		return m_manifoldsPtr.size()? &m_manifoldsPtr[0] : 0;

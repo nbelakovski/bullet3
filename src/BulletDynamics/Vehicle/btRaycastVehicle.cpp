@@ -33,26 +33,15 @@ btRigidBody& btActionInterface::getFixedBody()
 }
 
 btRaycastVehicle::btRaycastVehicle(const btVehicleTuning& tuning,btRigidBody* chassis,	btVehicleRaycaster* raycaster )
-:m_vehicleRaycaster(raycaster),
-m_pitchControl(btScalar(0.))
+:m_vehicleRaycaster(raycaster)
 {
+	m_actionType = btActionInterface::RAYCASTVEHICLE;
 	m_chassisBody = chassis;
 	m_indexRightAxis = 0;
 	m_indexUpAxis = 2;
 	m_indexForwardAxis = 1;
-	defaultInit(tuning);
 }
 
-
-void btRaycastVehicle::defaultInit(const btVehicleTuning& tuning)
-{
-	(void)tuning;
-	m_currentVehicleSpeedKmHour = btScalar(0.);
-	m_steeringValue = btScalar(0.);
-	
-}
-
-	
 
 btRaycastVehicle::~btRaycastVehicle()
 {
@@ -275,7 +264,7 @@ void btRaycastVehicle::updateVehicle( btScalar step )
 	}
 
 
-	m_currentVehicleSpeedKmHour = btScalar(3.6) * getRigidBody()->getLinearVelocity().length();
+//	m_currentVehicleSpeedKmHour = btScalar(3.6) * getRigidBody()->getLinearVelocity().length();
 	
 	const btTransform& chassisTrans = getChassisWorldTransform();
 
@@ -284,10 +273,10 @@ void btRaycastVehicle::updateVehicle( btScalar step )
 		chassisTrans.getBasis()[1][m_indexForwardAxis],
 		chassisTrans.getBasis()[2][m_indexForwardAxis]);
 
-	if (forwardW.dot(getRigidBody()->getLinearVelocity()) < btScalar(0.))
-	{
-		m_currentVehicleSpeedKmHour *= btScalar(-1.);
-	}
+//	if (forwardW.dot(getRigidBody()->getLinearVelocity()) < btScalar(0.))
+//	{
+//		m_currentVehicleSpeedKmHour *= btScalar(-1.);
+//	}
 
 	//
 	// simulate suspension
@@ -532,9 +521,15 @@ void	btRaycastVehicle::updateFriction(btScalar	timeStep)
 		if (!numWheel)
 			return;
 
+		// should probably put these variables back as class members, since
+	    // it seems like that way, the memory isn't reallocated every time.
+		btAlignedObjectArray<btVector3> m_forwardWS;
 		m_forwardWS.resize(numWheel);
+		btAlignedObjectArray<btVector3> m_axle;
 		m_axle.resize(numWheel);
+		btAlignedObjectArray<btScalar> m_forwardImpulse;
 		m_forwardImpulse.resize(numWheel);
+		btAlignedObjectArray<btScalar> m_sideImpulse;
 		m_sideImpulse.resize(numWheel);
 		
 		int numWheelsOnGround = 0;
@@ -551,46 +546,43 @@ void	btRaycastVehicle::updateFriction(btScalar	timeStep)
 			m_forwardImpulse[i] = btScalar(0.);
 
 		}
-	
+
+		for (int i=0;i<getNumWheels();i++)
 		{
-	
-			for (int i=0;i<getNumWheels();i++)
+
+			btWheelInfo& wheelInfo = m_wheelInfo[i];
+
+			class btRigidBody* groundObject = (class btRigidBody*) wheelInfo.m_raycastInfo.m_groundObject;
+
+			if (groundObject)
 			{
 
-				btWheelInfo& wheelInfo = m_wheelInfo[i];
-					
-				class btRigidBody* groundObject = (class btRigidBody*) wheelInfo.m_raycastInfo.m_groundObject;
+				const btTransform& wheelTrans = getWheelTransformWS( i );
 
-				if (groundObject)
-				{
+				btMatrix3x3 wheelBasis0 = wheelTrans.getBasis();
+				m_axle[i] = btVector3(
+					wheelBasis0[0][m_indexRightAxis],
+					wheelBasis0[1][m_indexRightAxis],
+					wheelBasis0[2][m_indexRightAxis]);
 
-					const btTransform& wheelTrans = getWheelTransformWS( i );
+				const btVector3& surfNormalWS = wheelInfo.m_raycastInfo.m_contactNormalWS;
+				btScalar proj = m_axle[i].dot(surfNormalWS);
+				m_axle[i] -= surfNormalWS * proj;
+				m_axle[i] = m_axle[i].normalize();
 
-					btMatrix3x3 wheelBasis0 = wheelTrans.getBasis();
-					m_axle[i] = btVector3(	
-						wheelBasis0[0][m_indexRightAxis],
-						wheelBasis0[1][m_indexRightAxis],
-						wheelBasis0[2][m_indexRightAxis]);
-					
-					const btVector3& surfNormalWS = wheelInfo.m_raycastInfo.m_contactNormalWS;
-					btScalar proj = m_axle[i].dot(surfNormalWS);
-					m_axle[i] -= surfNormalWS * proj;
-					m_axle[i] = m_axle[i].normalize();
-					
-					m_forwardWS[i] = surfNormalWS.cross(m_axle[i]);
-					m_forwardWS[i].normalize();
+				m_forwardWS[i] = surfNormalWS.cross(m_axle[i]);
+				m_forwardWS[i].normalize();
 
-				
-					resolveSingleBilateral(*m_chassisBody, wheelInfo.m_raycastInfo.m_contactPointWS,
-							  *groundObject, wheelInfo.m_raycastInfo.m_contactPointWS,
-							  btScalar(0.), m_axle[i],m_sideImpulse[i],timeStep);
 
-					m_sideImpulse[i] *= sideFrictionStiffness2;
-						
-				}
-				
+				resolveSingleBilateral(*m_chassisBody, wheelInfo.m_raycastInfo.m_contactPointWS,
+						  *groundObject, wheelInfo.m_raycastInfo.m_contactPointWS,
+						  btScalar(0.), m_axle[i],m_sideImpulse[i],timeStep);
+
+				m_sideImpulse[i] *= sideFrictionStiffness2;
 
 			}
+
+
 		}
 
 	btScalar sideFactor = btScalar(1.);
@@ -744,6 +736,10 @@ void	btRaycastVehicle::debugDraw(btIDebugDraw* debugDrawer)
 		debugDrawer->drawLine(wheelPosWS,getWheelInfo(v).m_raycastInfo.m_contactPointWS,wheelColor);
 
 	}
+}
+
+size_t btRaycastVehicle::calculateSerialBufferSize() const {
+	return sizeof(btRaycastVehicleData);
 }
 
 

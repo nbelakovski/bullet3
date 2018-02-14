@@ -18,6 +18,7 @@ subject to the following restrictions:
 
 class btIDebugDraw;
 class btCollisionWorld;
+class btSerializer;
 
 #include "LinearMath/btScalar.h"
 #include "btRigidBody.h"
@@ -28,10 +29,16 @@ class btActionInterface
 protected:
 
 	static btRigidBody& getFixedBody();
+    int m_userIndex2;
 	
 	
 public:
-
+	enum Type
+	{
+		RAYCASTVEHICLE,
+		NONE
+	};
+	btActionInterface::Type m_actionType = NONE;
 	virtual ~btActionInterface()
 	{
 	}
@@ -40,6 +47,18 @@ public:
 
 	virtual void debugDraw(btIDebugDraw* debugDrawer) = 0;
 
+	virtual void serialize(void* dataBuffer, btSerializer* serializer) const {}
+//	virtual void deSerialize(btSerializer*) {};
+	virtual size_t calculateSerialBufferSize() const {return 0;}
+
+    void setUserIndex2(int userIndex2) {m_userIndex2 = userIndex2;}
+    int getUserIndex2() const {return m_userIndex2;}
+
+};
+
+struct btActionInterfaceData
+{
+    int m_actionType;
 };
 
 #endif //_BT_ACTION_INTERFACE_H
