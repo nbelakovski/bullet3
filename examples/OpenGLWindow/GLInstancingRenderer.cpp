@@ -2008,7 +2008,6 @@ void GLInstancingRenderer::drawLine(const float from[4], const float to[4], cons
 B3_ATTRIBUTE_ALIGNED16(struct) SortableTransparentInstance
 {
 	b3Scalar m_projection;
-
 	int m_shapeIndex;
 	int m_instanceId;
 };
