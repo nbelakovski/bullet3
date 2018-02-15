@@ -2015,7 +2015,7 @@ B3_ATTRIBUTE_ALIGNED16(struct) SortableTransparentInstance
 B3_ATTRIBUTE_ALIGNED16(struct) TransparentDistanceSortPredicate
 {
 
-	inline bool operator() (const SortableTransparentInstance& a, const SortableTransparentInstance& b) const
+	inline bool operator() (const SortableTransparentInstance& a, const SortableTransparentInstance& b) const 
 	{
 		return (a.m_projection > b.m_projection);
 	}
@@ -2256,8 +2256,8 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 					inst.m_instanceId = curOffset;
 					b3Vector3 centerPosition;
 					centerPosition.setValue(m_data->m_instance_positions_ptr[inst.m_instanceId*4+0],
-								m_data->m_instance_positions_ptr[inst.m_instanceId*4+1],
-								m_data->m_instance_positions_ptr[inst.m_instanceId*4+2]);
+											m_data->m_instance_positions_ptr[inst.m_instanceId*4+1],
+											m_data->m_instance_positions_ptr[inst.m_instanceId*4+2]);
 					centerPosition *= -1;//reverse sort opaque instances
 					inst.m_projection = centerPosition.dot(camForwardVec);
 					transparentInstances.push_back(inst);
@@ -2267,10 +2267,10 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 					{
 						inst.m_instanceId = curOffset+i;
 						b3Vector3 centerPosition;
-
+						
 						centerPosition.setValue(m_data->m_instance_positions_ptr[inst.m_instanceId*4+0],
-										m_data->m_instance_positions_ptr[inst.m_instanceId*4+1],
-										m_data->m_instance_positions_ptr[inst.m_instanceId*4+2]);
+												m_data->m_instance_positions_ptr[inst.m_instanceId*4+1],
+												m_data->m_instance_positions_ptr[inst.m_instanceId*4+2]);
 						inst.m_projection = centerPosition.dot(camForwardVec);
 						transparentInstances.push_back(inst);
 					}
