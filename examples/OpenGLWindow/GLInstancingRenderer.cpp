@@ -1992,6 +1992,7 @@ void GLInstancingRenderer::drawLine(const float from[4], const float to[4], cons
 B3_ATTRIBUTE_ALIGNED16(struct) SortableTransparentInstance
 {
 	b3Scalar m_projection;
+
 	int m_shapeIndex;
 	int m_instanceId;
 };
@@ -2000,7 +2001,6 @@ B3_ATTRIBUTE_ALIGNED16(struct) TransparentDistanceSortPredicate
 {
 
 	inline bool operator() (const SortableTransparentInstance& a, const SortableTransparentInstance& b) const 
-
 	{
 		
 		return (a.m_projection > b.m_projection);
@@ -2228,11 +2228,6 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 		m_data->m_activeCamera->getCameraForwardVector(fwd);
 		b3Vector3 camForwardVec;
 		camForwardVec.setValue(fwd[0],fwd[1],fwd[2]);
-
-		float fwd[3];
-		m_data->m_activeCamera->getCameraForwardVector(fwd);
-		b3Vector3 camForwardVec;
-		camForwardVec.setValue(fwd[0],fwd[1],fwd[2]);
 		
 		
 		for (int obj=0;obj<m_graphicsInstances.size();obj++)
@@ -2250,8 +2245,8 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 					inst.m_instanceId = curOffset;
 					b3Vector3 centerPosition;
 					centerPosition.setValue(m_data->m_instance_positions_ptr[inst.m_instanceId*4+0],
-											m_data->m_instance_positions_ptr[inst.m_instanceId*4+1],
-											m_data->m_instance_positions_ptr[inst.m_instanceId*4+2]);
+								m_data->m_instance_positions_ptr[inst.m_instanceId*4+1],
+								m_data->m_instance_positions_ptr[inst.m_instanceId*4+2]);
 					centerPosition *= -1;//reverse sort opaque instances
 					inst.m_projection = centerPosition.dot(camForwardVec);
 					transparentInstances.push_back(inst);
@@ -2261,10 +2256,10 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 					{
 						inst.m_instanceId = curOffset+i;
 						b3Vector3 centerPosition;
-						
+
 						centerPosition.setValue(m_data->m_instance_positions_ptr[inst.m_instanceId*4+0],
-												m_data->m_instance_positions_ptr[inst.m_instanceId*4+1],
-												m_data->m_instance_positions_ptr[inst.m_instanceId*4+2]);
+										m_data->m_instance_positions_ptr[inst.m_instanceId*4+1],
+										m_data->m_instance_positions_ptr[inst.m_instanceId*4+2]);
 						inst.m_projection = centerPosition.dot(camForwardVec);
 						transparentInstances.push_back(inst);
 					}
