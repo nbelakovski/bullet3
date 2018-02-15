@@ -2008,7 +2008,6 @@ void GLInstancingRenderer::drawLine(const float from[4], const float to[4], cons
 B3_ATTRIBUTE_ALIGNED16(struct) SortableTransparentInstance
 {
 	b3Scalar m_projection;
-
 	int m_shapeIndex;
 	int m_instanceId;
 };
@@ -2018,7 +2017,6 @@ B3_ATTRIBUTE_ALIGNED16(struct) TransparentDistanceSortPredicate
 
 	inline bool operator() (const SortableTransparentInstance& a, const SortableTransparentInstance& b) const
 	{
-
 		return (a.m_projection > b.m_projection);
 	}
 };
@@ -2242,7 +2240,6 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 		b3Vector3 camForwardVec;
 		camForwardVec.setValue(fwd[0],fwd[1],fwd[2]);
 
-
 		for (int obj=0;obj<m_graphicsInstances.size();obj++)
 		{
 			b3GraphicsInstance* gfxObj = m_graphicsInstances[obj];
@@ -2281,7 +2278,6 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 			}
 		}
 		TransparentDistanceSortPredicate sorter;
-
 		transparentInstances.quickSort(sorter);
 
 	}
@@ -2553,7 +2549,6 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 							}
 							case B3_USE_PROJECTIVE_TEXTURE_RENDERMODE:
 							{
-								printf("PROJECTIVE TEXTURE!!\n");
 								if ( gfxObj->m_flags&eGfxTransparency)
 								{
 									glDepthMask(false);
