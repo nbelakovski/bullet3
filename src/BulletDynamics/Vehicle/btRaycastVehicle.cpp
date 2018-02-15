@@ -35,13 +35,21 @@ btRigidBody& btActionInterface::getFixedBody()
 
 const char * btRaycastVehicle::serialize(void * dataBuffer, btSerializer * serializer) const
 {
-    btRaycastVehicleData * data = static_cast<btRaycastVehicleData*>(dataBuffer);
+    auto * data = static_cast<btRaycastVehicleData*>(dataBuffer);
     data->m_chassisBody = serializer->getUniquePointer(m_chassisBody);
     data->m_indexRightAxis = m_indexRightAxis;
     data->m_indexUpAxis = m_indexUpAxis;
     data->m_indexForwardAxis = m_indexForwardAxis;
     data->m_userIndex2 = m_userIndex2;
     data->base.m_actionType = RAYCASTVEHICLE;
+    // serialize the wheels
+    for (int i = 0; i < m_wheelInfo.size(); ++i) {
+        btChunk* chunk = serializer->allocate(sizeof(btWheelDoubleData), 1);
+        const char * structType = m_wheelInfo[i].serialize(chunk->m_oldPtr, serializer);
+        reinterpret_cast<btWheelDoubleData*>(chunk->m_oldPtr)->associatedVehicle = serializer->getUniquePointer(
+                const_cast<btRaycastVehicle*>(this));
+        serializer->finalizeChunk(chunk, structType, BT_WHEELS_CODE, const_cast<btWheelInfo*>(&m_wheelInfo[i]));
+    }
     return "btRaycastVehicleData";
 }
 
@@ -89,6 +97,11 @@ btWheelInfo&	btRaycastVehicle::addWheel( const btVector3& connectionPointCS, con
 	updateWheelTransformsWS( wheel , false );
 	updateWheelTransform(getNumWheels()-1,false);
 	return wheel;
+}
+
+void btRaycastVehicle::addWheel(btWheelInfo * wheelInfo)
+{
+    m_wheelInfo.push_back(*wheelInfo);
 }
 
 
