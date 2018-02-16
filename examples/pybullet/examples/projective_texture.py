@@ -28,3 +28,4 @@ while 1:
 		sleep(0.01) # Time in seconds.
 	else:
 		p.stepSimulation()
+		
