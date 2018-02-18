@@ -2016,11 +2016,7 @@ B3_ATTRIBUTE_ALIGNED16(struct) SortableTransparentInstance
 B3_ATTRIBUTE_ALIGNED16(struct) TransparentDistanceSortPredicate
 {
 
-<<<<<<< HEAD
 	inline bool operator() (const SortableTransparentInstance& a, const SortableTransparentInstance& b) const
-=======
-	inline bool operator() (const SortableTransparentInstance& a, const SortableTransparentInstance& b) const 
->>>>>>> Merge remote-tracking branch 'upstream/master'
 	{
 
 		return (a.m_projection > b.m_projection);
