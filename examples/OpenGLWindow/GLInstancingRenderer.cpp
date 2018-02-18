@@ -1091,7 +1091,6 @@ void GLInstancingRenderer::updateShape(int shapeIndex, const float* vertices)
 	glBufferSubData(	GL_ARRAY_BUFFER,vertexStrideInBytes*gfxObj->m_vertexArrayOffset,sz,
  						vertices);
 #endif
-
 }
 
 int GLInstancingRenderer::registerShape(const float* vertices, int numvertices, const int* indices, int numIndices,int primitiveType, int textureId)
