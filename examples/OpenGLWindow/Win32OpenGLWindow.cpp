@@ -25,7 +25,7 @@ subject to the following restrictions:
 
 #include "Win32InternalWindowData.h"
 #include <stdio.h>
-#include <stdlib.h>
+
 
 void Win32OpenGLWindow::enableOpenGL()
 {

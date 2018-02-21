@@ -1086,6 +1086,7 @@ void GLInstancingRenderer::updateShape(int shapeIndex, const float* vertices)
 	glBufferSubData(	GL_ARRAY_BUFFER,vertexStrideInBytes*gfxObj->m_vertexArrayOffset,sz,
  						vertices);
 #endif
+
 }
 
 int GLInstancingRenderer::registerShape(const float* vertices, int numvertices, const int* indices, int numIndices,int primitiveType, int textureId)
@@ -2009,8 +2010,9 @@ B3_ATTRIBUTE_ALIGNED16(struct) SortableTransparentInstance
 B3_ATTRIBUTE_ALIGNED16(struct) TransparentDistanceSortPredicate
 {
 
-	inline bool operator() (const SortableTransparentInstance& a, const SortableTransparentInstance& b) const 
+	inline bool operator() (const SortableTransparentInstance& a, const SortableTransparentInstance& b) const
 	{
+
 		return (a.m_projection > b.m_projection);
 	}
 };
@@ -2233,6 +2235,8 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 		m_data->m_activeCamera->getCameraForwardVector(fwd);
 		b3Vector3 camForwardVec;
 		camForwardVec.setValue(fwd[0],fwd[1],fwd[2]);
+
+
 		for (int obj=0;obj<m_graphicsInstances.size();obj++)
 		{
 			b3GraphicsInstance* gfxObj = m_graphicsInstances[obj];
@@ -2271,8 +2275,9 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 			}
 		}
 		TransparentDistanceSortPredicate sorter;
+
 		transparentInstances.quickSort(sorter);
-		
+
 	}
 
 
