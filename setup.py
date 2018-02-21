@@ -388,8 +388,7 @@ if _platform == "linux" or _platform == "linux2":
     CXX_FLAGS += '-fno-inline-functions-called-once'
     sources = sources + ["examples/ThirdPartyLibs/enet/unix.c"]\
     +["examples/OpenGLWindow/X11OpenGLWindow.cpp"]\
-    +["examples/ThirdPartyLibs/glad/glad.c"]\
-    +["examples/ThirdPartyLibs/glad/glad_glx.c"]
+    +["examples/ThirdPartyLibs/glad/glad.c"]
     include_dirs += ["examples/ThirdPartyLibs/optionalX11"]
 elif _platform == "win32":
     print("win32!")
