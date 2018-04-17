@@ -974,6 +974,8 @@ void	btMultiBodyDynamicsWorld::serialize(btSerializer* serializer)
 
 	serializeContactManifolds(serializer);
 
+	serializeActionInterfaces(serializer);
+
 	serializer->finishSerialization();
 }
 
