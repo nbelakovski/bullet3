@@ -13,7 +13,7 @@
 
 #include "../../examples/CommonInterfaces/CommonRigidBodyBase.h"
 #include <gtest/gtest.h>
-#define USE_MOTIONSTATE 1
+#define USE_MOTIONSTATE 0
 
 static btMultiBodyDynamicsWorld *create_btMultiBodyDynamicsWorld()
 {
