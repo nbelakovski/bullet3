@@ -83,7 +83,6 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
 			colShape->calculateLocalInertia(mass, localInertia);
-		printf("Start from:\n");
 		for (int i = 0; i < 3; i++)
 		{
 			int a[4];
@@ -125,8 +124,6 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 			box_before[i]->setUserIndex(-1);
 			initial_world->addRigidBody(box_before[i]);
 			box_before[i]->setLinearVelocity(btVector3(a[2], 0, a[3]));
-			printf("%d:\n",i+1);
-			box_before[i]->getCenterOfMassPosition().printXYZ();
 		}
 	}
 
