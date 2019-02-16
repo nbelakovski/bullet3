@@ -23,7 +23,7 @@ IF (INTERNAL_ADD_POSTFIX_EXECUTABLE_NAMES)
 			SET_TARGET_PROPERTIES(Test_btKinematicCharacterController PROPERTIES  RELWITHDEBINFO_POSTFIX "_RelWithDebugInfo")
 ENDIF(INTERNAL_ADD_POSTFIX_EXECUTABLE_NAMES)
 
-LINK_LIBRARIES(BulletDynamics BulletCollision LinearMath gtest BulletWorldImporter BulletFileLoader)
+LINK_LIBRARIES(BulletWorldImporter)
 
 ADD_EXECUTABLE(Test_deterministic_save_and_restore test_deterministic_save_and_restore.cpp)
 
