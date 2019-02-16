@@ -25,9 +25,7 @@ ENDIF(INTERNAL_ADD_POSTFIX_EXECUTABLE_NAMES)
 
 LINK_LIBRARIES(BulletDynamics BulletCollision LinearMath gtest BulletWorldImporter BulletFileLoader)
 
-ADD_EXECUTABLE(Test_deterministic_save_and_restore test_deterministic_save_and_restore.cpp
-		../../Extras/Serialize/BulletWorldImporter/btBulletWorldImporter.cpp
-		../../Extras/Serialize/BulletWorldImporter/btWorldImporter.cpp)
+ADD_EXECUTABLE(Test_deterministic_save_and_restore test_deterministic_save_and_restore.cpp)
 
 ADD_TEST(Test_DeterministicSaveRestore_PASS Test_deterministic_save_and_restore)
 
