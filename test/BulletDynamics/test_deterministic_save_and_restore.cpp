@@ -36,7 +36,7 @@ static btMultiBodyDynamicsWorld *create_btMultiBodyDynamicsWorld()
 GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 {
 
-/*	static char filename[] = "test_serialize.mixail";
+	static char filename[] = "test_serialize.mixail";
 	btRigidBody* box_before[3];
 	btCollisionObject* box_after[3];
 	btMultiBodyDynamicsWorld *initial_world = create_btMultiBodyDynamicsWorld();
