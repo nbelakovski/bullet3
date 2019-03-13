@@ -93,6 +93,12 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 
 	// serialize
 
+	if (initial_world->getDispatcher()->getNumManifolds() < 2)
+	{
+		printf("Error: too little manifolds\n");
+		exit(1);
+	}
+
 	const btVector3 before_serialize1 = box_before[0]->getCenterOfMassPosition();
 	const btVector3 before_serialize2 = box_before[1]->getCenterOfMassPosition();
 	const btVector3 before_serialize3 = box_before[2]->getCenterOfMassPosition();
@@ -112,9 +118,9 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 
 	// save position of all boxes
 
-	const btVector3 before_deserialize1 = box_before[0]->getCenterOfMassPosition();
-	const btVector3 before_deserialize2 = box_before[1]->getCenterOfMassPosition();
-	const btVector3 before_deserialize3 = box_before[2]->getCenterOfMassPosition();
+	const btVector3 steady_state1 = box_before[0]->getCenterOfMassPosition();
+	const btVector3 steady_state2 = box_before[1]->getCenterOfMassPosition();
+	const btVector3 steady_state3 = box_before[2]->getCenterOfMassPosition();
 
 	// deserialize
 
@@ -139,16 +145,15 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 
 	// assert that the position of all boxes in deserialized_world are the same as in initial_world
 
-	printf("Stop simulation and check in %d time\n",time);
-	EXPECT_FLOAT_EQ(before_deserialize1.getX(),after_deserialize1.getX());
-	EXPECT_FLOAT_EQ(before_deserialize1.getY(),after_deserialize1.getY());
-	EXPECT_FLOAT_EQ(before_deserialize1.getZ(),after_deserialize1.getZ());
-	EXPECT_FLOAT_EQ(before_deserialize2.getX(),after_deserialize2.getX());
-	EXPECT_FLOAT_EQ(before_deserialize2.getY(),after_deserialize2.getY());
-	EXPECT_FLOAT_EQ(before_deserialize2.getZ(),after_deserialize2.getZ());
-	EXPECT_FLOAT_EQ(before_deserialize3.getX(),after_deserialize3.getX());
-	EXPECT_FLOAT_EQ(before_deserialize3.getY(),after_deserialize3.getY());
-	EXPECT_FLOAT_EQ(before_deserialize3.getZ(),after_deserialize3.getZ());
+	EXPECT_FLOAT_EQ(steady_state1.getX(),after_deserialize1.getX());
+	EXPECT_FLOAT_EQ(steady_state1.getY(),after_deserialize1.getY());
+	EXPECT_FLOAT_EQ(steady_state1.getZ(),after_deserialize1.getZ());
+	EXPECT_FLOAT_EQ(steady_state2.getX(),after_deserialize2.getX());
+	EXPECT_FLOAT_EQ(steady_state2.getY(),after_deserialize2.getY());
+	EXPECT_FLOAT_EQ(steady_state2.getZ(),after_deserialize2.getZ());
+	EXPECT_FLOAT_EQ(steady_state3.getX(),after_deserialize3.getX());
+	EXPECT_FLOAT_EQ(steady_state3.getY(),after_deserialize3.getY());
+	EXPECT_FLOAT_EQ(steady_state3.getZ(),after_deserialize3.getZ());
 }
 
 int main(int argc, char** argv)
@@ -156,3 +161,4 @@ int main(int argc, char** argv)
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }
+
