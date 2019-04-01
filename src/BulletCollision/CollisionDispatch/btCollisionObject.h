@@ -168,7 +168,12 @@ public:
 		///static objects, kinematic and object without contact response don't merge islands
 		return  ((m_collisionFlags & (CF_STATIC_OBJECT | CF_KINEMATIC_OBJECT | CF_NO_CONTACT_RESPONSE) )==0);
 	}
-
+	
+	virtual const btVector3& getCenterOfMassPosition() const
+	{
+		return m_worldTransform.getOrigin();
+	}
+	
 	const btVector3& getAnisotropicFriction() const
 	{
 		return m_anisotropicFriction;
