@@ -166,6 +166,7 @@ public:
 		return ((m_collisionFlags & (CF_STATIC_OBJECT | CF_KINEMATIC_OBJECT | CF_NO_CONTACT_RESPONSE)) == 0);
 	}
 
+
 	virtual const btVector3& getCenterOfMassPosition() const
 	{
 		return m_worldTransform.getOrigin();
