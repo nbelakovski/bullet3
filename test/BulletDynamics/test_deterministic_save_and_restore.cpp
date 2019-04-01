@@ -146,7 +146,7 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 	// assert that the position of all boxes in deserialized_world are the same as in initial_world
 /*
 	EXPECT_FLOAT_EQ(steady_state1.getX(),after_deserialize1.getX());
-	EXPECT_FLOAT_EQ(steady_state1.getY(),after_deserialize1.getY());
+//	EXPECT_FLOAT_EQ(steady_state1.getY(),after_deserialize1.getY());
 	EXPECT_FLOAT_EQ(steady_state1.getZ(),after_deserialize1.getZ());
 	EXPECT_FLOAT_EQ(steady_state2.getX(),after_deserialize2.getX());
 	EXPECT_FLOAT_EQ(steady_state2.getY(),after_deserialize2.getY());
