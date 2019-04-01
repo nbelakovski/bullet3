@@ -175,12 +175,14 @@ public:
 	{
 		return m_anisotropicFriction;
 	}
+
 	void setAnisotropicFriction(const btVector3& anisotropicFriction, int frictionMode = CF_ANISOTROPIC_FRICTION)
 	{
 		m_anisotropicFriction = anisotropicFriction;
 		bool isUnity = (anisotropicFriction[0] != 1.f) || (anisotropicFriction[1] != 1.f) || (anisotropicFriction[2] != 1.f);
 		m_hasAnisotropicFriction = isUnity ? frictionMode : 0;
 	}
+
 	bool hasAnisotropicFriction(int frictionMode = CF_ANISOTROPIC_FRICTION) const
 	{
 		return (m_hasAnisotropicFriction & frictionMode) != 0;
@@ -192,6 +194,7 @@ public:
 	{
 		m_contactProcessingThreshold = contactProcessingThreshold;
 	}
+	
 	btScalar getContactProcessingThreshold() const
 	{
 		return m_contactProcessingThreshold;
