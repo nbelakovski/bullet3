@@ -1591,7 +1591,7 @@ void GLInstancingRenderer::renderScene()
 	else if (useProjectiveTexture)
 	{
 		//renderSceneInternal(B3_CREATE_SHADOWMAP_RENDERMODE);
-		renderSceneInternal(B3_CREATE_SHADOWMAP_RENDERMODE);
+		renderSceneInternal(B3_USE_PROJECTIVE_TEXTURE_RENDERMODE);
 	}
 	else
 	{
@@ -2234,8 +2234,8 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 		m_data->m_activeCamera->getCameraForwardVector(fwd);
 		b3Vector3 camForwardVec;
 		camForwardVec.setValue(fwd[0],fwd[1],fwd[2]);
-		
-		
+
+
 		for (int obj=0;obj<m_graphicsInstances.size();obj++)
 		{
 			b3GraphicsInstance* gfxObj = m_graphicsInstances[obj];
@@ -2274,7 +2274,9 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 			}
 		}
 		TransparentDistanceSortPredicate sorter;
+
 		transparentInstances.quickSort(sorter);
+
 	}
 
 
