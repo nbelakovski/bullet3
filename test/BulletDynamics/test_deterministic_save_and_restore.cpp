@@ -144,9 +144,9 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 	const btVector3 after_deserialize3 = box_after[2]->getCenterOfMassPosition();
 
 	// assert that the position of all boxes in deserialized_world are the same as in initial_world
-/*
+
 	EXPECT_FLOAT_EQ(steady_state1.getX(),after_deserialize1.getX());
-//	EXPECT_FLOAT_EQ(steady_state1.getY(),after_deserialize1.getY());
+	EXPECT_FLOAT_EQ(steady_state1.getY(),after_deserialize1.getY());
 	EXPECT_FLOAT_EQ(steady_state1.getZ(),after_deserialize1.getZ());
 	EXPECT_FLOAT_EQ(steady_state2.getX(),after_deserialize2.getX());
 	EXPECT_FLOAT_EQ(steady_state2.getY(),after_deserialize2.getY());
@@ -154,7 +154,7 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 	EXPECT_FLOAT_EQ(steady_state3.getX(),after_deserialize3.getX());
 	EXPECT_FLOAT_EQ(steady_state3.getY(),after_deserialize3.getY());
 	EXPECT_FLOAT_EQ(steady_state3.getZ(),after_deserialize3.getZ());
-*/
+
 }
 
 int main(int argc, char** argv)
