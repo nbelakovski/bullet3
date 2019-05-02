@@ -172,11 +172,6 @@ public:
 		return m_worldTransform.getOrigin();
 	}
 	
-	virtual const btVector3& getCenterOfMassPosition() const
-	{
-		return m_worldTransform.getOrigin();
-	}
-	
 	const btVector3& getAnisotropicFriction() const
 	{
 		return m_anisotropicFriction;
