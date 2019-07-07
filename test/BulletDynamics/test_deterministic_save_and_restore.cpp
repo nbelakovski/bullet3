@@ -84,8 +84,7 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 
 	const double delta_t = 0.01;
 	int time = 0;
-	while (box_before[0]->getCenterOfMassPosition().getY() == box_before[1]->getCenterOfMassPosition().getY() &&
-			box_before[1]->getCenterOfMassPosition().getY() == box_before[2]->getCenterOfMassPosition().getY())
+	while (initial_world->getDispatcher()->getNumManifolds() <= 2)
 	{
 		time++;
 		initial_world->stepSimulation(delta_t);
@@ -103,6 +102,7 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 	const btVector3 before_serialize2 = box_before[1]->getCenterOfMassPosition();
 	const btVector3 before_serialize3 = box_before[2]->getCenterOfMassPosition();
 	btSerializer* s = new btDefaultSerializer;
+	s->setSerializationFlags(BT_SERIALIZE_CONTACT_MANIFOLDS);
 	initial_world->serialize(s);
 	FILE* file = fopen(filename, "wb");
 	fwrite(s->getBufferPointer(), s->getCurrentBufferSize(), 1, file);
@@ -133,7 +133,10 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 
 	btMultiBodyDynamicsWorld *deserialized_world = create_btMultiBodyDynamicsWorld();
 	btMultiBodyWorldImporter importer(deserialized_world);
-	importer.loadFile(filename);
+	importer.loadFile(filename); // load once to bring the objects into the world
+	importer.setImporterFlags(eRESTORE_EXISTING_OBJECTS);
+    importer.loadFile(filename); // load a second time with the above flag set to restore the contact manifolds
+
 	box_after[0] = importer.getRigidBodyByIndex(1);
 	box_after[1] = importer.getRigidBodyByIndex(2);
 	box_after[2] = importer.getRigidBodyByIndex(3);
@@ -156,7 +159,6 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 	const btVector3 after_deserialize3 = box_after[2]->getCenterOfMassPosition();
 
 	// assert that the position of all boxes in deserialized_world are the same as in initial_world
-
 	EXPECT_FLOAT_EQ(steady_state1.getX(),after_deserialize1.getX());
 	EXPECT_FLOAT_EQ(steady_state1.getY(),after_deserialize1.getY());
 	EXPECT_FLOAT_EQ(steady_state1.getZ(),after_deserialize1.getZ());
@@ -166,7 +168,6 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 	EXPECT_FLOAT_EQ(steady_state3.getX(),after_deserialize3.getX());
 	EXPECT_FLOAT_EQ(steady_state3.getY(),after_deserialize3.getY());
 	EXPECT_FLOAT_EQ(steady_state3.getZ(),after_deserialize3.getZ());
-
 }
 
 int main(int argc, char** argv)
