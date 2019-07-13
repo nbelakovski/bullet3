@@ -109,10 +109,17 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 	fclose(file);
 
 	// step simulation until boxes are no longer moving
-
-	for (int i = 0; i < 500; ++i)
+	btVector3 check_state1;
+	btVector3 check_state2;
+	btVector3 check_state3;
+	while(check_state1 != box_before[0]->getCenterOfMassPosition() ||
+		check_state2 != box_before[1]->getCenterOfMassPosition() ||
+		check_state3 != box_before[2]->getCenterOfMassPosition())
 	{
 		time++;
+		check_state1 = box_before[0]->getCenterOfMassPosition();
+		check_state2 = box_before[1]->getCenterOfMassPosition();
+		check_state3 = box_before[2]->getCenterOfMassPosition();
 		initial_world->stepSimulation(delta_t);
 	}
 
@@ -133,9 +140,14 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 
 	// step simulation until boxes are no longer moving
 
-	for (int i = 0; i < 500; ++i)
+	while(check_state1 != box_after[0]->getCenterOfMassPosition() ||
+		check_state2 != box_after[1]->getCenterOfMassPosition() ||
+		check_state3 != box_after[2]->getCenterOfMassPosition())
 	{
 		time++;
+		check_state1 = box_after[0]->getCenterOfMassPosition();
+		check_state2 = box_after[1]->getCenterOfMassPosition();
+		check_state3 = box_after[2]->getCenterOfMassPosition();
 		deserialized_world->stepSimulation(delta_t);
 	}
 
@@ -144,7 +156,7 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 	const btVector3 after_deserialize3 = box_after[2]->getCenterOfMassPosition();
 
 	// assert that the position of all boxes in deserialized_world are the same as in initial_world
-/*
+
 	EXPECT_FLOAT_EQ(steady_state1.getX(),after_deserialize1.getX());
 	EXPECT_FLOAT_EQ(steady_state1.getY(),after_deserialize1.getY());
 	EXPECT_FLOAT_EQ(steady_state1.getZ(),after_deserialize1.getZ());
@@ -154,7 +166,7 @@ GTEST_TEST(BulletDynamics, DeterministicSaveRestore)
 	EXPECT_FLOAT_EQ(steady_state3.getX(),after_deserialize3.getX());
 	EXPECT_FLOAT_EQ(steady_state3.getY(),after_deserialize3.getY());
 	EXPECT_FLOAT_EQ(steady_state3.getZ(),after_deserialize3.getZ());
-*/
+
 }
 
 int main(int argc, char** argv)
