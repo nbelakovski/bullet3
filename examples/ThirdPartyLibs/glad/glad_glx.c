@@ -775,6 +775,7 @@ static int find_extensionsGLX(void) {
 	return 1;
 }
 
+
 static void find_coreGLX(Display *dpy, int screen) {
 	int major = 0, minor = 0;
 	glXQueryVersion(dpy, &major, &minor);

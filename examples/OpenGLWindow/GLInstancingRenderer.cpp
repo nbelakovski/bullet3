@@ -1586,7 +1586,7 @@ void GLInstancingRenderer::renderScene()
 	else if (useProjectiveTexture)
 	{
 		//renderSceneInternal(B3_CREATE_SHADOWMAP_RENDERMODE);
-		renderSceneInternal(B3_USE_PROJECTIVE_TEXTURE_RENDERMODE);
+		renderSceneInternal(B3_CREATE_SHADOWMAP_RENDERMODE);
 	}
 	else
 	{
@@ -2003,7 +2003,6 @@ void GLInstancingRenderer::drawLine(const float from[4], const float to[4], cons
 B3_ATTRIBUTE_ALIGNED16(struct) SortableTransparentInstance
 {
 	b3Scalar m_projection;
-
 	int m_shapeIndex;
 	int m_instanceId;
 };
@@ -2226,6 +2225,11 @@ b3Assert(glGetError() ==GL_NO_ERROR);
 		//GLuint lastBindTexture = 0;
 
 		transparentInstances.reserve(totalNumInstances);
+		
+		float fwd[3];
+		m_data->m_activeCamera->getCameraForwardVector(fwd);
+		b3Vector3 camForwardVec;
+		camForwardVec.setValue(fwd[0],fwd[1],fwd[2]);
 
 		float fwd[3];
 		m_data->m_activeCamera->getCameraForwardVector(fwd);
