@@ -166,7 +166,6 @@ public:
 		return ((m_collisionFlags & (CF_STATIC_OBJECT | CF_KINEMATIC_OBJECT | CF_NO_CONTACT_RESPONSE)) == 0);
 	}
 
-
 	virtual const btVector3& getCenterOfMassPosition() const
 	{
 		return m_worldTransform.getOrigin();
@@ -177,7 +176,7 @@ public:
 		return m_anisotropicFriction;
 	}
 
-	void setAnisotropicFriction(const btVector3& anisotropicFriction, int frictionMode = CF_ANISOTROPIC_FRICTION)
+void setAnisotropicFriction(const btVector3& anisotropicFriction, int frictionMode = CF_ANISOTROPIC_FRICTION)
 	{
 		m_anisotropicFriction = anisotropicFriction;
 		bool isUnity = (anisotropicFriction[0] != 1.f) || (anisotropicFriction[1] != 1.f) || (anisotropicFriction[2] != 1.f);
@@ -195,8 +194,8 @@ public:
 	{
 		m_contactProcessingThreshold = contactProcessingThreshold;
 	}
-	
-	btScalar getContactProcessingThreshold() const
+
+btScalar getContactProcessingThreshold() const
 	{
 		return m_contactProcessingThreshold;
 	}
